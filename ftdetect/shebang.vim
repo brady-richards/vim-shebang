@@ -49,6 +49,10 @@ command! -nargs=0 Shebang call s:shebang()
 fun! s:shebang() " {{{ set valid filetype based on shebang line
   try
     let line = getline(1)
+    if ! empty( getline(2) )
+      let line .= "\n" . getline(2)
+    endif
+
     if empty(line)
       return
     endif
@@ -87,6 +91,9 @@ AddShebangPattern! python     ^#!.*\s\+python\>
 AddShebangPattern! python     ^#!.*[s]\?bin/python\>
 " js
 AddShebangPattern! javascript ^#!.*\s\+node\>
+
+" perl
+AddShebangPattern! perl         ^#!/bin/sh\>\\n#!\s-\*-perl-\*-\(..........................................\)\?
 
 " }}}
 " Key bindings {{{

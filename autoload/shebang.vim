@@ -14,6 +14,19 @@ fun! shebang#error(message) " {{{ show error message
   echomsg a:message
   echohl None
 endf " }}}
+
+func shebang#compare_patterns(i1, i2)
+   return len(a:i2) - len(a:i1)
+endfunc
+
+fun! shebang#detect_filetype(line, patterns) " {{{ try to detect current filetype
+  for pattern in sort(keys(a:patterns),"shebang#compare_patterns")
+    if a:line =~# pattern
+      return a:patterns[pattern]
+    endif
+  endfor
+endf " }}}
+
 fun! shebang#test(fn, expected, ...) " {{{ call function with passed params and
   " compare expected value with returned result
   if a:0 < 1
@@ -35,13 +48,6 @@ fun! shebang#test(fn, expected, ...) " {{{ call function with passed params and
     echomsg 'Returned=' . string(result)
     echomsg 'Expected=' . string(a:expected)
   endif
-endf " }}}
-fun! shebang#detect_filetype(line, patterns) " {{{ try to detect current filetype
-  for pattern in keys(a:patterns)
-    if a:line =~# pattern
-      return a:patterns[pattern]
-    endif
-  endfor
 endf " }}}
 fun! s:detect_filetype_test(line, patterns, expected) " {{{ test
   call shebang#test("shebang#detect_filetype", a:expected, a:line, a:patterns)
